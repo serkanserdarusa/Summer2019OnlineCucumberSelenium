@@ -1,0 +1,230 @@
+Today is 1/3/2020
+
+	Parallel testing
+	How to create regression suit
+	Passing browser type from terminal: mvn test -browser=firefox
+	Summary of cucumber framework
+
+#######################################
+
+Thread - it's a path of execution.
+
+mvn verify -Dbrowser=firefox - to run with firefox
+
+mvn verify -Dbrowser=chrome - to run with chrome
+
+if report is failing, tun with test goal
+
+mvn test -Dbrowser=chrome - to run with chrome
+
+
+to read browser parameter in your project, use System.getProperty("browser")
+
+You can pass any parameters from command line.
+
+package com.vytrack.runners;
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = "@target/rerun.txt",
+        glue = "com/vytrack/step_definitions",
+        plugin = {
+                "html:target/rerun-default-cucumber-reports",
+        }
+)
+public class FailedRunner {
+}
+
+Failed runner shouldn't generate json report
+
+
+
+
+mvn test -P Regression - to kick off regression. We have Regression profile in pom.xml file. Profiles let's to have multiple build configurations. Also, regression profile runs RegressionRunner.java class. RegressionRunner class has list of features that were selected for regression.
+
+<profiles>
+        <profile>
+            <id>Regression</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M3</version>
+                        <configuration>
+                            <includes>
+                                <include>**/RegressionRunner.java</include>
+                            </includes>
+                            <testFailureIgnore>true</testFailureIgnore>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+How about running tests in parallel?
+
+Add this to maven-surefire configuration.
+
+    <parallel>methods</parallel>
+    <perCoreThreadCount>false</perCoreThreadCount>
+    <threadCountMethods>2</threadCountMethods>
+
+
+
+threadCountMethods - specify how many browsers will be running concurrently.
+
+mvn clean - delete target folder
+mvn clean test - delete target folder and run cucumber tests
+mvn clean verify - delete target folder, run cucumber test, generate cucumber HTML report
+
+mvn clean verify -P - delete target folder, run cucumber test, generate cucumber HTML report or whatever was specified in Regression profile.
+
+
+
+
+ <profiles>
+        <profile>
+            <id>Regression</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M3</version>
+                        <configuration>
+
+                            <parallel>methods</parallel>
+                            <perCoreThreadCount>false</perCoreThreadCount>
+                            <threadCountMethods>2</threadCountMethods>
+
+                            <includes>
+                                <include>**/RegressionRunner.java</include>
+                            </includes>
+                            <testFailureIgnore>true</testFailureIgnore>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>net.masterthought</groupId>
+                        <artifactId>maven-cucumber-reporting</artifactId>
+                        <version>4.9.0</version>
+                        <executions>
+                            <execution>
+                                <id>execution</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <projectName>Cucumber HTML Reports</projectName>
+                                    <outputDirectory>${project.build.directory}/regression</outputDirectory>
+                                    <inputDirectory>${project.build.directory}</inputDirectory>
+                                    <jsonFiles>
+                                        <param>**/cucumber*.json</param>
+                                    </jsonFiles>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+We can also run CucumberRunner classes in parallel, just put  <parallel>classes</parallel>
+instead of  <parallel>methods</parallel>
+
+
+
+ <threadCountMethods>2</threadCountMethods> - means 2 webdrivers will be created, 2 browsers will open, 2 tests will be running at the same time.
+
+ private static ThreadLocal<WebDriver> driverPool = new ThreadLocal<>();
+
+
+ThreadLocal class allows to create copy of webdriver object per thread at run time. If wouldn't use ThreadLocal, webdrivers would override each other.
+
+
+Our configuration runs feature files in parallel.
+
+package com.vytrack.runners;
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = {
+                "src/test/resources/features/activities",
+                "src/test/resources/features/fleet"
+        },
+        glue = "com/vytrack/step_definitions",
+        dryRun = false,
+        plugin = {"html:target/default-cucumber-reports",
+                "json:target/cucumber.json",
+                "rerun:target/rerun.txt"
+        }
+)
+public class RegressionRunner {
+
+}
+#########################################################################
+	TDD - Test Driven Development (when you create unit tests first and then develop a functionality)
+
+	DDT - data driven testing (when your test data is separated from the code. Instead of having tests data written
+	as java variables, we pull test data from external source, such as feature file, excel file or csv file)
+
+	BDD - behavior driven development
+
+	BDD emerged from and extends TDD. Instead of writing unit tests from specification why not make the specification a test itself. The main idea is that business analysts, project managers, users or anyone without technical, but with sufficient business, knowledge can define tests.
+
+	In simple words, we write tests from end-user perspective.
+
+	Feature: Reset password
+		As user, I want to be able to reset password
+
+		Scenario: reset password by using email
+			Given user is on the landing page
+			Then user click on "reset password" button
+			And user enters valid email "email@email.com" to receive reset link
+
+	To write tests scenarios, we use domain specific language - Gherkin.
+
+PO tells what she wants --> BA writes down requirements into Jira Stories --> Developers, Testers, BA, and other people are looking into same business requirements.
+
+We develop test scenarios based on acceptance criteria.  (In my case, I was doing (99% opposite, pretty much reverse way))
+
+There is no one correct way, every project is unique. So you can say pretty much anything.
+
+	#Tell me about your current framework?
+
+	In my current project, we use Java along with Maven.  Our framework is a combination of BDD and DDT frameworks so we call it Hybrid. We use Cucumber as a BDD tool do develop test scenarios from end-user perspective. Thus, our test scenarios are readable for non-technical people. We store test scenarios in feature files. Also, we follow Page Object Model design pattern. Basically we create corresponded page class for every page of application. It helps to organize code, specifically webelements and separate test from page logic. Every page class stores web elements and relevant to the particular page functional methods. For example for Login page  we have LoginPage,java class, under pages package. We use ThreadLocal driver to ensure thread safety and run tests in parallel. Besides pages package, we have package with step definitions, where we store code implementation for cucumber test steps. Then we have utilities package, where we store reusable methods and Driver class. For configuration, we use properties file. Last but not least, we schedule smoke and regression tests in Jenkins by pulling code from github.
+
+
+
+	Maven - it's a project build tool, and also used to manage dependencies. Maven has it's own life-cycle (it's a group of commands that maven executes to build, test and deploy project)
+
+
+	Cucumber flow:
+
+	Feature file: inside feature file we write scenarios
+	Every scenario consists of tests steps.
+	Every test step must start with gherkin keyword: Given, When, Then, And, But
+	Every test step also has a code implementation, which calls step definition.
+	Inside step definition, we perform actions and assertions, by using page objects
+
+
+
+
+
+
+
+
+
+

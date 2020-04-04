@@ -1,0 +1,183 @@
+
+Warm UP task!
+Write a method, under LoginPage class that will login user user certain role:
+
+public void login(String role){
+	if(role.equals("driver")){
+		login as driver
+	}else if(role.equals("store.manager")){
+		login as store manager
+	}else if(role.equals("sales.manager")){
+		login as sales manager
+	}
+}
+Add cucumber scenario into Login.feature to test it:
+
+	Given user is on the login page
+	Then user logs in as "role"
+
+----> configuration.properties
+
+driver.username=user160
+store.manager.username=storemanager85
+sales.manager.username=salesmanager110
+
+##########################################
+
+	Agenda: Scenario Outline
+
+
+Scenario: - it runs only once
+Scenario Outline: - it runs as many many times, as many rows of data you have in examples table. (excluding 1st row)
+
+
+Data Driven Testing - testing approach that allows to store test data and test separately.
+
+Test Data - coming from cucumber.feature file
+Test logic - StepDefinitions.java
+
+If you want to run exactly same test with different data set, use Scenario Outline.
+
+#########
+#Scenario Outline = Data provider
+#######
+
+In Cucumber, we pass test data from data table, examples table and parameters. In case of Scenario Outline, test runs multiple times automatically, as many times as many rows of data examples table contains(rows-1, because of 1st row).
+
+
+Scenario Outline must be followed by Examples table. You cannot create Scenario Outline without examples table.
+
+
+
+  @login_with_role_ddt
+  Scenario Outline: DDT example, Login as <role>
+    Given user is on the login page
+    Then user logs in as "<role>"
+
+    Examples: roles
+      | role          |
+      | driver        | <-- 1st scenario
+      | sales manager |	<-- 2nd scenario
+      | store manager |	<-- 3rd scenario
+
+in between <> we pass parameter. Parameter must match some column names in examples table. Data sets will be used from top to bottom.
+
+Gherkin keywords:
+Feature
+Background
+Scenario
+Scenario Outline
+Given
+When
+Then
+And
+But
+Examples
+
+At work, do we write scenarios on intellij or on jira an export them
+
+It depends, but if you have Xray, or Zephyr plugin that allows you to create BDD test scenario and export them, then create test scenarios on jira first and export them to intellij.
+
+#############################################
+
+
+If we have group of scenario that share same test steps, we can combine them and create scenario outline.
+
+IF steps are the same, but only test data is different, we can use Scenario Outline.
+
+Data will be coming from Examples table.
+
+1 row = 1 set of data = 1 test scenario = 1 test execution
+
+Examples:
+      | username        | password    |
+      | storemanager85  | UserUser123 |
+
+
+Question: can we have more than 1 Examples table for same Scenario Outline?
+
+- Yes
+
+Question: what's the difference between data table and examples table?
+
+	Data Table used to expand 1 specific test step
+	Examples table used to provide test data to scenario
+
+
+  @login_with_roles_ddt_2
+  Scenario Outline: Login as <role> and verify <title> page title is correct
+    Given user is on the login page
+    And user logs in as "<role>"
+    When user navigates to "<module>" then to "<sub module>"
+    Then the page title should be "<title>"
+
+    Examples: drivers
+      | role   | module     | sub module      | title                                                        |
+      | driver | Fleet      | Vehicles        | Car - Entities - System - Car - Entities - System            |
+
+
+In case of Examples table, we don't read values as list, map, list<map<key, value>>. We retrieve values separately, as single values not collections of values.
+
+
+
+plugin = {"html:target/default-cucumber-reports",
+                "json:target/cucumber.json",
+                "rerun:target/rerun.txt" <---------- To generate txt file with failed scenarios
+        }
+
+To rerun failed scenarios, add "rerun:target/rerun.txt" into CucumberRunner class
+
+
+Then, you can execute that rerun.txt file, by specifying path to it: features = "@target/rerun.txt",
+
+To perform these runs automatically, add it into maven-surefire configuration
+
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <configuration>
+                    <runOrder>Alphabetical</runOrder>
+                    <includes>
+                        <include>**/CucumberRunner.java</include>
+                        <include>**/FailedRunner.java</include>
+                    </includes>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+
+
+If some test failed, rerun.txt will tell you what feature file and what scenarios exactly failed
+
+file:src/test/resources/features/SmokeTest.feature:19
+
+19 means scenario on line 19 failed
+
+
+
+################################
+
+Scenario Outline -  type of scenario that runs multiple times. We use Scenario Outline to run same test with different data sets. In testing, it calls Data Driven Testing.
+
+Scenario Outline pull data from Examples table. So don't forget to add it.
+
+To read specific parameter, use angled brackets <>
+
+To read role value, we have to put role inside angled brackets: <role>
+
+  @login_with_role_ddt
+  Scenario Outline: DDT example, Login as <role>
+    Given user is on the login page
+    Then user logs in as "<role>"
+
+    Examples: roles
+      | role          |
+      | driver        |
+      | sales manager |
+      | store manager |
+
+      					To generate list of failed tests		To point on only failed tests
+Rerun failed scenarios:  plugin: "rerun:target/rerun.txt" -->  features = "@target/rerun.txt",
+
+
+

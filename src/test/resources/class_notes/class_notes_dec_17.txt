@@ -1,0 +1,422 @@
+Today is 12/17/2019
+
+	Agenda:
+		BDD
+		Cucumber BDD
+		Feature file
+		Runners
+		Step definitions
+		Gherkin: Given, When, Then, And...
+		Scenario
+		Cucumber Tags
+		Report
+		*If we have time, we will talk about cucumber hooks
+
+######################################
+
+
+1. For class, we use vytrack, but homework will be based on bitrix.
+
+2. Since we have long break, we can meet on optional sessions to discuss homework solutions.
+
+3. You will have new homework  based on bitrix, that you will have to do with cucumber project.
+
+
+######################################################
+
+BDD it's a branch of TDD
+
+TDD ins simple words, it's when every method is covered by unit test, to ensure code quality.
+
+BDD or Behavior Driven Development - in simple words, it's when we write human readable business requirements.
+
+For any new feature that has to be developed, we create user story, and user story has some template:
+
+As user, I want to be able to....
+
+Every story has acceptance criteria
+
+Entire team participate sprint planning meeting to discuss stories for next sprint.
+
+Since everyone is looking into same requirements, there is gonna be less confusion during testing and development.
+
+In my project, PO was providing business requirements, then these requirements where written into use story with acceptance criteria. PO explains what feature team has to develop and how this feature should work.
+
+Based on user story we create feature files to create tests.
+
+To implement BDD into our framework we use Cucumber.
+
+*Cucumber allows to write test scenarios from end-user perspective.
+*Cucumber allows to make test scenarios understandable for non-technical people
+*Cucumber use special language that calls gherkin
+
+gherkin it's not a programing language, it's a collection of keywords that are used to write scenarios:
+Given, When, Then, And, But
+Scenario, Scenario Outline, Feature, Background
+
+As you remember, we were doing DDT with testng through @DataProvider.
+
+Cucumber, supports DDT with Scenario Outline.
+
+Feature: it's a gherkin keyword. After : you need to explain what feature will be tested here.
+Also we can add user story title to feature description.
+
+Feature keyword should be used only once per .feature file.
+
+Scenario/Scenario Outline = can be a lot.
+
+Feature: Login
+  As user, I want to be able to login into vytrack
+  under different roles with username and password
+
+  Scenario: Login as store manager
+    Given user is on the login page
+    Then user logs in as store manager
+    And user verifies that "Dashboard" page subtitle is displayed
+
+
+test case = cucumber test scenario
+
+To create test scenario, use Scenario: keyword
+
+then after : describe test scenario
+
+Then we go to CucumberRunner and implement runner class.
+
+package com.vytrack.runners;
+
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+     features = "src/test/resources/features" // path to feature folder
+)
+public class CucumberRunner {
+
+
+}
+
+Once you click run, cucumber will generate step definitions. Every scenario consists of test steps.
+Every test step has a code implementation. Runner class will glue tests steps and step definitions. But, you need to tell runner class where you want to store step definitions.
+
+
+
+io.cucumber.junit.UndefinedThrowable: The step "user verifies that "Dashboard" page subtitle is displayed" is undefined
+
+There were undefined steps. You can implement missing steps with the snippets below:
+
+@Given("user is on the login page")
+public void user_is_on_the_login_page() {
+    // Write code here that turns the phrase above into concrete actions
+    throw new cucumber.api.PendingException();
+}
+
+@Then("user logs in as store manager")
+public void user_logs_in_as_store_manager() {
+    // Write code here that turns the phrase above into concrete actions
+    throw new cucumber.api.PendingException();
+}
+
+@Then("user verifies that {string} page subtitle is displayed")
+public void user_verifies_that_page_subtitle_is_displayed(String string) {
+    // Write code here that turns the phrase above into concrete actions
+    throw new cucumber.api.PendingException();
+}
+
+
+        features = "src/test/resources/features", // path to features
+        glue = "com/vytrack/step_definitions"    // path to step definitions
+
+dryRun = false (by default)
+
+if dryRun = true, it will not run your tests, it will check if every single  test step has code implementation , which is step definition method
+
+												All of them will have same name except first keyword
+
+ Given  user is on the login page                - test step
+@Given("user is on the login page")              - code implementation of test step
+    public void user_is_on_the_login_page() {    - method name
+        System.out.println("I am on the login page");
+    }
+
+Content of tag is important. Content is case and space sensitive.
+
+Method name doesn't really matter. But it will be created according to step with snake case (when every word is connected with "_").
+
+
+Also, steps are reusable. Create test step once, and you use it in every feature file.
+
+
+Test steps in cucumber are reusable. If we pass some parameter with "", we can make them even more flexible.
+
+dryRun = true | - will check if every test step has step definition method
+IF some steps are missing code implementation, cucumber will print snippets into console.
+Paste these snippets into step definition class.
+
+dryRun = false| - run tests
+
+################################
+
+Steps to write tests with cucumber:
+
+1. Create feature file and write test scenarios.
+
+2. Go to CucumberRunner class and execute dryRun.
+	make sure you specified:
+	 glue = "com/vytrack/step_defintions"
+	 features="src/test/resources/features"
+
+3. Implement step definitions and delete original content from step definitions.
+
+4. Once you provided code, change dryRun to false and run tests indeed.
+
+
+with testng we were creating methods with @Test annotation.
+
+in cucumber, we create Scenarios, and then every scenario has code implementation in step definition class
+
+
+Also, if you remember we had TestBase class with @BeforeMethod and @AfterMethod annotated methods.
+
+#####################
+
+ @BeforeMethod - runs before every test, setup
+
+ @AfterMethod  - runs after every test, cleanup
+
+#####################
+
+In cucumber, we can do same thing. It calls hook.
+
+hook runs before every scenario and after every scenario.
+
+#####################
+
+How to create hook?
+
+We can put it into any step definition class, but better to put it under step_defintion package into separate class called Hook.
+
+Hook will be executed automatically. No need to extend it or do something
+
+Just create 2 void methods and put @Before and @After annotation that are coming from io.cucumber
+
+
+#in testng we had testng.xml file, in cucumber we have CucumberRunner.java#
+
+
+Before Hook
+
+
+I am on the login page
+Login as store manager
+Verifying page subtitle: Dashboard
+
+
+I am on the login page
+Login as driver
+Verifying page subtitle: Dashboard
+
+
+I am on the login page
+Login as sales manager
+Verifying page subtitle: Dashboard
+
+With hook class
+
+Test setup!
+I am on the login page
+Login as store manager
+Verifying page subtitle: Dashboard
+Cleanup!
+Test completed!
+
+
+Test setup!
+I am on the login page
+Login as driver
+Verifying page subtitle: Dashboard
+Cleanup!
+Test completed!
+
+
+Test setup!
+I am on the login page
+Login as sales manager
+Verifying page subtitle: Dashboard
+Cleanup!
+Test completed!
+
+
+	@Before will be executed first
+
+ 	Given user is on the login page
+    Then user logs in as store manager
+    And user verifies that "Dashboard" page subtitle is displayed
+
+    @After will be executed after last step
+
+Make sure that Scenario is coming from here:
+
+import io.cucumber.core.api.Scenario;
+
+
+    @After
+    public void teardown(Scenario scenario){
+        //if test failed - do this
+        if(scenario.isFailed()){
+            System.out.println("Test failed!");
+            //we will take a screen-shot and attach it to report later
+        }else{
+            System.out.println("Cleanup!");
+            System.out.println("Test completed!");
+        }
+        System.out.println("##############################");
+    }
+
+
+scenario object returns info about current scenario.
+
+By using this class, Scenario, we can check test status: passed/failed
+
+failure will be followed by stack trace (error description)
+
+
+#########################
+
+With tags we can run specific scenarios and ignore others:
+
+Mark and scenario with annotation
+
+ @negative_test
+  Scenario: Verify that warning message is displayed when password is not correct
+    Given user is on the login page
+    Then user enters "storemanager85" username and "wrong" password
+    And user verifies that "Invalid user name or password." message is displayed
+
+Then use this annotation in runner class.
+
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = "src/test/resources/features",
+        glue = "com/vytrack/step_definitions",
+        dryRun = false,
+        tags = "@negative_test" --- this line indicates that tests with given annotation will be executed, and others will be ignored
+)
+public class CucumberRunner {
+
+
+}
+
+To create groups, just put some tag on scenarios.
+
+###tags = "@negative_test"     - run tests only with this tag
+###tags = "not @negative_test" - run tests only WITHOUT this tag
+###tags = "~@negative_test"    - run tests only WITHOUT this tag (old way)
+
+~ - it calls tilde
+
+You can create any tag name. For example based on modules, type of test, like @smoke, @regression,
+user story number @VYT-1234
+
+dryRun = true | we don't run tests, just checking if everything ready for testing
+dryRun = false| run tests
+
+We can specify multiple tags at the same time:
+
+
+###tags = "@negative_test or @driver"  - run tests with negative or @driver tags
+
+  @driver
+  Scenario: Login as driver
+    Given user is on the login page
+    Then user logs in as driver
+    And user verifies that "Dashboard" page subtitle is displayed
+
+  @negative_test
+  Scenario: Verify that warning message is displayed when password is not correct
+    Given user is on the login page
+    Then user enters "storemanager85" username and "wrong" password
+    And user verifies that "Invalid user name or password." message is displayed
+
+###tags = "@negative_test and @driver" - run scenarios that have both tags only, not either or
+
+
+ @negative_test @driver
+  Scenario: Verify that warning message is displayed when username is not correct
+    Given user is on the login page
+    Then user enters "wrong_username" username and "UserUser123" password
+    And user verifies that "Invalid user name or password." message is displayed
+
+If there is no such a test that includes both tags, nothing will run.
+
+##################
+
+To generate default cucumber report, add this line into your runner class:
+
+plugin = {"html:target/default-cucumber-reports"}
+
+Every time, cucumber will generate default html report with test results.
+No need to do anything else.
+Just one line.
+
+Run tests first to get report.
+
+Go to target --> default-cucumber-reports --> index.html
+
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+
+//to resolve error
+add into pom.xml
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+
+
+##############################
+Test setup!
+[main] INFO io.github.bonigarcia.wdm.WebDriverManager - Using chromedriver 79.0.3945.36 (since Google Chrome 79 is installed in your machine)
+[main] INFO io.github.bonigarcia.wdm.WebDriverManager - Exporting webdriver.chrome.driver as /Users/studio2/.m2/repository/webdriver/chromedriver/mac64/79.0.3945.36/chromedriver
+Starting ChromeDriver 79.0.3945.36 (3582db32b33893869b8c1339e8f4d9ed1816f143-refs/branch-heads/3945@{#614}) on port 21313
+Only local connections are allowed.
+Please protect ports used by ChromeDriver and related test frameworks to prevent access by malicious code.
+Dec 17, 2019 4:58:35 PM org.openqa.selenium.remote.ProtocolHandshake createSession
+INFO: Detected dialect: W3C
+I am on the login page
+Login as store manager
+Verifying page subtitle: Dashboard
+Cleanup!
+Test completed!
+##############################
+
+
+Cucumber allow to develop tests from end-user perspective. Thus, it's readable for non-technical people.
+
+To create tests: create feature file like: Login.feature
+
+Them describe feature:
+	Feature: Login
+
+And create test scenarios:
+
+	Scenario: Login as driver
+		Given user is
+		When
+		Then
+		And
+
+Perform dry run and implement step definitions.
+Then set dryRun to false, and run tests indeed.
+
+
+
+
+
+
+

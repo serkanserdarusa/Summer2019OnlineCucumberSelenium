@@ -1,0 +1,147 @@
+warm-up task:
+Create feature file smoke test and come up with 3 Smoke Test Scenarios.
+
+Today us 12/19/2019
+
+	Agenda:
+		Background
+		Cucumber HTML Report
+
+
+#########################################
+
+
+@smoke_test
+Feature: Smoke test
+
+  Background: open login page and login as store manager
+    Given user is on the login page
+    Then user logs in as store manager
+
+  Scenario: Verify dashboard page
+    And user verifies that "Dashboard" page subtitle is displayed
+
+  Scenario: Verify Manage Dashboards page
+    And user navigates to "Dashboards" then to "Manage Dashboards"
+    Then user verifies that "All Manage Dashboards" page subtitle is displayed
+
+Background - it's a precondition for every test scenario in one particular feature file. Instead of repeating same test steps for every scenario, we can put these steps into background.
+
+Flow of execution:
+
+hook before --> background --> scenario --> hook after
+
+hook and background are completely optional.
+
+Make sure that you rename classes and any other files properly.
+
+Tight click on file --> refactor --> rename
+
+Provide new name and click refactor.
+
+To run tests in headless mode, we can use few things:
+
+HTMLUnit
+PhantomJS
+Firefox with FirefoxOptions that will set headless mode to true
+Chrome with ChromeOptions,  where we will set headless mode to true:
+
+  				case "chrome_headless":
+                    WebDriverManager.chromedriver().setup();
+                    //to configure chrome browser for tests
+                    ChromeOptions options = new ChromeOptions();
+                    //to run tests without interface, set to true
+                    options.setHeadless(true);
+                    driver = new ChromeDriver(options);
+                    break;
+
+
+Headless webdriver is much faster, because it doesn't display web page, tests are running in a background.
+
+Headless webdriver cannot upload files. This is a disadvantage of running tests in headless browser.
+
+You can still tale screenshots and do almost everything like with regular browser.
+
+
+Common issue in cucumber: step definitions with same name.
+
+This is maven build.
+
+ <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <configuration>
+                    <includes>
+                        <include>**/CucumberRunner.java</include>
+                    </includes>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>net.masterthought</groupId>
+                <artifactId>maven-cucumber-reporting</artifactId>
+                <version>4.9.0</version>
+                <executions>
+                    <execution>
+                        <id>execution</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <projectName>Cucumber HTML Reports</projectName>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <inputDirectory>${project.build.directory}</inputDirectory>
+                            <jsonFiles>
+                                <param>**/cucumber*.json</param>
+                            </jsonFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+Official repository: https://github.com/damianszczepanik/cucumber-reporting
+
+Verify it's a maven goal.
+
+verify - it's one of the phases from maven life-cycle.
+
+life cycle starts from compiling project and ends with deployment.
+
+To generate report, you must execute maven goal verify.
+
+Report will not be generated if you runt it from CucumberRunner directly.
+
+maven-cucumber-reporting plugin requires .json file, to create report.
+
+We need declare in runner class json report:
+
+"json:target/cucumber.json"
+
+Also, we can run verify command from terminal:
+
+mvn verify |  but you need to install maven to use it.
+
+We will do it later.
+
+if(scenario.isFailed()){
+            System.out.println("Test failed!");
+            byte[] screenshot = ((TakesScreenshot)Driver.get()).getScreenshotAs(OutputType.BYTES);
+            scenario.embed(screenshot, "image/png");
+}
+
+Take a screenshot, only if scenario fails.
+
+scenario.embed(screenshot, "image/png", "name of screenshot");
+
+
+
+
+
+
+
