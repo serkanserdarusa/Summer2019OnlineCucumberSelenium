@@ -13,11 +13,14 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+//I did some changes
+
 //burasi master
 //serkan
 //Mehmet some changes from online
 
 //serkan some changes from local
+
 
 //everything that is in common among pages
 //can go here
