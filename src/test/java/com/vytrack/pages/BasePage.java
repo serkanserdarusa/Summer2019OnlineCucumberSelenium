@@ -13,8 +13,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-
-
+//burasi master
+//serkan
 //Mehmet some changes from online
 
 //serkan some changes from local
