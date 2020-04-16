@@ -110,7 +110,7 @@
 
     <profiles>
         <profile>
-            <id>CucumberRunner</id>
+            <id>RegressionRunner</id>
             <build>
                 <plugins>
                     <plugin>
@@ -121,10 +121,10 @@
 
                             <parallel>methods</parallel>
                             <perCoreThreadCount>false</perCoreThreadCount>
-                            <threadCountMethods>4</threadCountMethods>
+                            <threadCountMethods>10</threadCountMethods>
 
                             <includes>
-                                <include>**/CucumberRunner.java</include>
+                                <include>**/RegressionRunner.java</include>
                             </includes>
                             <testFailureIgnore>false</testFailureIgnore>
                         </configuration>
