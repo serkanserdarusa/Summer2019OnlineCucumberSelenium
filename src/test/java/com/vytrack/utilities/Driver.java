@@ -24,19 +24,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Driver {
+public class Driver {//1
     private static Logger logger = Logger.getLogger(Driver.class);
-    private static ThreadLocal<WebDriver> driverPool = new ThreadLocal<>();
+    private static ThreadLocal<WebDriver> driverPool = new ThreadLocal<>();//2
     private static String userName = "vasylfomiuk2";
     private static String accessKey = "N9rzTpSQYnQFNLe2YPgr";
     private static final String URL = "https://" + userName + ":" + accessKey + "@hub-cloud.browserstack.com/wd/hub";
 
 
-    private Driver() {
+    private Driver() {//3
 
     }
 
-    public static WebDriver get() {
+    public static WebDriver get() {//4
         //if this thread doesn't have a web driver yet - create it and add to pool
         if (driverPool.get() == null) {
             logger.info("TRYING TO CREATE DRIVER");
@@ -86,7 +86,7 @@ public class Driver {
                         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
                         desiredCapabilities.setBrowserName(BrowserType.CHROME);
                         desiredCapabilities.setCapability("platform", Platform.ANY);
-                        driverPool.set(new RemoteWebDriver(new URL("http://ec2-18-212-156-23.compute-1.amazonaws.com:4444/wd/hub"), desiredCapabilities));
+                        driverPool.set(new RemoteWebDriver(new URL("http://ec2-3-86-81-150.compute-1.amazonaws.com:4444/wd/hub"), desiredCapabilities));
                     } catch (Exception e) {
                         logger.error(e.getMessage());
                         e.printStackTrace();
@@ -96,7 +96,7 @@ public class Driver {
                     try {
                         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
                         desiredCapabilities.setBrowserName(BrowserType.FIREFOX);
-                        driverPool.set(new RemoteWebDriver(new URL("http://ec2-18-212-156-23.compute-1.amazonaws.com:4444/wd/hub"), desiredCapabilities));
+                        driverPool.set(new RemoteWebDriver(new URL("http://ec2-3-86-81-150.compute-1.amazonaws.com:4444/wd/hub"), desiredCapabilities));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -113,7 +113,7 @@ public class Driver {
                         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID);
                         desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
-                        driverPool.set(new RemoteWebDriver(new URL("http://localhost:4723/wd/hub"), desiredCapabilities));
+                        driverPool.set(new RemoteWebDriver(new URL("http://http://ec2-3-86-81-150.compute-1.amazonaws.com:4444/wd/hub"), desiredCapabilities));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
