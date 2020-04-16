@@ -13,7 +13,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-//whatsup manddd
+//whatsup mandddccgit
 //everything that is in common among pages
 //can go here
 //for example top menu elements don't belong to specific page
