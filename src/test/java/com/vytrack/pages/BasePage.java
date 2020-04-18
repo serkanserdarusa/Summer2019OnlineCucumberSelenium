@@ -27,7 +27,7 @@ public class BasePage {
     private static Logger logger = Logger.getLogger(BasePage.class);
 
     @FindBy(css = "div[class='loader-mask shown']")
-    public WebElement loaderMask;
+    public  WebElement loaderMask;
 
     @FindBy(css = "h1[class='oro-subtitle']")
     public WebElement pageSubTitle;
