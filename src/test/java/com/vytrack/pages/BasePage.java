@@ -14,12 +14,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 
-//hi serkan
-<<<<<<< HEAD
-//hi serkan and java
-=======
-//hi guys
->>>>>>> 8850136415f270fcf0e3746588c9253785c032a0
+
+
 //hi java
 
 //everything that is in common among pages
