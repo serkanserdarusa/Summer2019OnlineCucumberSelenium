@@ -14,9 +14,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 
-//hi serkan
-//hi guys
-//hi java
+
+
+
 
 //everything that is in common among pages
 //can go here
@@ -27,7 +27,7 @@ public class BasePage {
     private static Logger logger = Logger.getLogger(BasePage.class);
 
     @FindBy(css = "div[class='loader-mask shown']")
-    public WebElement loaderMask;
+    public  WebElement loaderMask;
 
     @FindBy(css = "h1[class='oro-subtitle']")
     public WebElement pageSubTitle;
