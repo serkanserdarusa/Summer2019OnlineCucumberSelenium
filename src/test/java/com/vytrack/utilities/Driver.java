@@ -96,6 +96,8 @@ public class Driver {//1
                     try {
                         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
                         desiredCapabilities.setBrowserName(BrowserType.FIREFOX);
+                        desiredCapabilities.setCapability("platform", Platform.ANY);
+
                         driverPool.set(new RemoteWebDriver(new URL("http://ec2-3-86-81-150.compute-1.amazonaws.com:4444/wd/hub"), desiredCapabilities));
                     } catch (Exception e) {
                         e.printStackTrace();

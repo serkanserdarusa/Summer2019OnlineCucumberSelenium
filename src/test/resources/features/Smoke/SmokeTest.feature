@@ -1,4 +1,4 @@
-@smoke_test @CT25-22 @CT25-21
+@smoke_test
 Feature: Smoke test
 
   Background: open login page and login as store manager
