@@ -15,11 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 
-//aaaaaaaaaaaaaaaaaa
-//dddddddddddddddd
-//cccccccccccccccccc
-//bbbbbbbbbbbbbbbb
-//eeeeeeeeeeeeeeee
+
 
 
 //everything that is in common among pages
