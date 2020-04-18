@@ -15,7 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 
-
+//hi guyssssssssss
 //hi java
 //hi serkansssssssss
 //everything that is in common among pages
